@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react"
+import React, { useCallback, useContext, useMemo, useState } from "react"
 import { clipboard, shell } from "electron"
 import fs from "fs"
 import os from "os"
@@ -14,6 +14,7 @@ import {
   TimelineContext,
   RandomJoke,
 } from "reactotron-core-ui"
+import { CommandType } from "reactotron-core-contract"
 import {
   MdSearch,
   MdDeleteSweep,
@@ -21,6 +22,10 @@ import {
   MdSwapVert,
   MdReorder,
   MdDownload,
+  MdViewModule,
+  MdDescription,
+  MdWifi,
+  MdPlayArrow,
 } from "react-icons/md"
 import { FaTimes } from "react-icons/fa"
 import styled from "styled-components"
@@ -82,6 +87,48 @@ export const ButtonContainer = styled.div`
   cursor: pointer;
 `
 
+const TabsContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  border-bottom: 1px solid ${(props) => props.theme.line};
+  background-color: ${(props) => props.theme.backgroundSubtleDark};
+`
+
+const Tab = styled.button<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: ${(props) =>
+    props.$active ? props.theme.tag : props.theme.backgroundSubtleLight || props.theme.background};
+  color: ${(props) => (props.$active ? props.theme.background : props.theme.foregroundLight)};
+  font-size: 14px;
+  font-weight: ${(props) => (props.$active ? "600" : "500")};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid
+    ${(props) => (props.$active ? props.theme.tag : props.theme.line)};
+
+  &:hover {
+    background-color: ${(props) =>
+      props.$active ? props.theme.tag : props.theme.backgroundLighter};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  svg {
+    font-size: 18px;
+  }
+`
+
+type TabType = "all" | "logs" | "network" | "actions"
+
 function Timeline() {
   const { sendCommand, clearCommands, commands, openDispatchModal } = useContext(ReactotronContext)
   const {
@@ -99,9 +146,26 @@ function Timeline() {
     setHiddenCommands,
   } = useContext(TimelineContext)
 
+  const [activeTab, setActiveTab] = useState<TabType>("all")
+
+  const filterByTab = useCallback((commands: any[]) => {
+    switch (activeTab) {
+      case "logs":
+        return commands.filter((cmd) => cmd.type === CommandType.Log)
+      case "network":
+        return commands.filter((cmd) => cmd.type === CommandType.ApiResponse)
+      case "actions":
+        return commands.filter((cmd) => cmd.type === CommandType.StateActionComplete)
+      case "all":
+      default:
+        return commands
+    }
+  }, [activeTab])
+
   let filteredCommands
   try {
     filteredCommands = filterCommands(commands, search, hiddenCommands)
+    filteredCommands = filterByTab(filteredCommands)
   } catch (error) {
     console.error(error)
     filteredCommands = commands
@@ -193,6 +257,24 @@ function Timeline() {
           </SearchContainer>
         )}
       </Header>
+      <TabsContainer>
+        <Tab $active={activeTab === "all"} onClick={() => setActiveTab("all")}>
+          <MdViewModule />
+          All
+        </Tab>
+        <Tab $active={activeTab === "logs"} onClick={() => setActiveTab("logs")}>
+          <MdDescription />
+          Logs
+        </Tab>
+        <Tab $active={activeTab === "network"} onClick={() => setActiveTab("network")}>
+          <MdWifi />
+          Network
+        </Tab>
+        <Tab $active={activeTab === "actions"} onClick={() => setActiveTab("actions")}>
+          <MdPlayArrow />
+          Actions
+        </Tab>
+      </TabsContainer>
       <TimelineContainer>
         {filteredCommands.length === 0 ? (
           <EmptyState icon={MdReorder} title="No Activity">
