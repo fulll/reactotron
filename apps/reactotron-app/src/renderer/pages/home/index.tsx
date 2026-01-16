@@ -40,7 +40,7 @@ const floatAnimation = keyframes`
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
   }
 `
 
@@ -72,12 +72,11 @@ const ConnectionCard = styled.div`
   }
 
   &:hover {
-    transform: translateY(-8px) scale(1.02);
+    transform: translateY(-4px) scale(1.02);
     box-shadow:
       0 20px 25px -5px rgba(0, 0, 0, 0.2),
       0 10px 10px -5px rgba(0, 0, 0, 0.1);
     border-color: ${(props) => props.theme.tag};
-    animation: ${floatAnimation} 2s ease-in-out infinite;
 
     &::before {
       opacity: 1;
@@ -85,7 +84,7 @@ const ConnectionCard = styled.div`
   }
 
   &:active {
-    transform: translateY(-6px) scale(1.01);
+    transform: translateY(-3px) scale(1.01);
   }
 `
 
