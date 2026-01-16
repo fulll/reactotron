@@ -1,7 +1,8 @@
-import React, { useContext, useMemo } from "react"
+import React, { useContext, useMemo, useState } from "react"
 import { Header } from "reactotron-core-ui"
 import styled, { keyframes } from "styled-components"
 import { useNavigate } from "react-router-dom"
+import { MdChevronRight } from "react-icons/md"
 
 import StandaloneContext from "../../contexts/Standalone"
 import {
@@ -150,6 +151,43 @@ const ScreenInfo = styled.div`
   border-top: 1px solid ${(props) => props.theme.subtleLine};
 `
 
+const CollapsibleSection = styled.div`
+  margin-top: 30px;
+`
+
+const CollapsibleHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.backgroundSubtleDark};
+  }
+`
+
+const ChevronIcon = styled(MdChevronRight)<{ $isOpen: boolean }>`
+  font-size: 20px;
+  color: ${(props) => props.theme.foregroundLight};
+  transition: transform 0.3s ease;
+  transform: rotate(${(props) => (props.$isOpen ? "90deg" : "0deg")});
+`
+
+const SectionTitle = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${(props) => props.theme.foregroundLight};
+`
+
+const CollapsibleContent = styled.div<{ $isOpen: boolean }>`
+  max-height: ${(props) => (props.$isOpen ? "2000px" : "0")};
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+`
+
 function ConnectionCell({ connection }: { connection: Connection }) {
   const navigate = useNavigate()
   const { selectConnection } = useContext(StandaloneContext)
@@ -192,6 +230,7 @@ function ConnectionCell({ connection }: { connection: Connection }) {
 
 function Connections() {
   const { connections } = useContext(StandaloneContext)
+  const [isAndroidHelpOpen, setIsAndroidHelpOpen] = useState(false)
 
   return (
     <Container>
@@ -206,7 +245,15 @@ function Connections() {
         ) : (
           <Welcome />
         )}
-        <AndroidDeviceHelp />
+        <CollapsibleSection>
+          <CollapsibleHeader onClick={() => setIsAndroidHelpOpen(!isAndroidHelpOpen)}>
+            <ChevronIcon $isOpen={isAndroidHelpOpen} />
+            <SectionTitle>Android Devices Help</SectionTitle>
+          </CollapsibleHeader>
+          <CollapsibleContent $isOpen={isAndroidHelpOpen}>
+            <AndroidDeviceHelp />
+          </CollapsibleContent>
+        </CollapsibleSection>
       </ContentContainer>
     </Container>
   )
