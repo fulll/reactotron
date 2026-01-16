@@ -128,6 +128,40 @@ const Tab = styled.button<{ $active: boolean }>`
 
 type TabType = "all" | "logs" | "network" | "actions"
 
+const LogFiltersContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 20px;
+  border-bottom: 1px solid ${(props) => props.theme.line};
+  background-color: ${(props) => props.theme.backgroundSubtleLight || props.theme.background};
+`
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: ${(props) => props.theme.foregroundLight};
+  font-size: 13px;
+  font-weight: 500;
+  user-select: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${(props) => props.theme.tag};
+  }
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: ${(props) => props.theme.tag};
+  }
+`
+
+type LogLevel = "debug" | "warn" | "error"
+
 function Timeline() {
   const { sendCommand, clearCommands, commands, openDispatchModal } = useContext(ReactotronContext)
   const {
@@ -146,12 +180,31 @@ function Timeline() {
   } = useContext(TimelineContext)
 
   const [activeTab, setActiveTab] = useState<TabType>("all")
+  const [logLevels, setLogLevels] = useState<Set<LogLevel>>(new Set(["debug", "warn", "error"]))
+
+  const toggleLogLevel = (level: LogLevel) => {
+    setLogLevels((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(level)) {
+        newSet.delete(level)
+      } else {
+        newSet.add(level)
+      }
+      return newSet
+    })
+  }
 
   const filterByTab = useCallback(
     (commands: any[]) => {
       switch (activeTab) {
         case "logs":
-          return commands.filter((cmd) => cmd.type === CommandType.Log)
+          return commands.filter((cmd) => {
+            if (cmd.type !== CommandType.Log) return false
+            // Filter by selected log levels
+            if (logLevels.size === 0) return false
+            const level = cmd.payload?.level || "debug"
+            return logLevels.has(level as LogLevel)
+          })
         case "network":
           return commands.filter((cmd) => cmd.type === CommandType.ApiResponse)
         case "actions":
@@ -161,7 +214,7 @@ function Timeline() {
           return commands
       }
     },
-    [activeTab]
+    [activeTab, logLevels]
   )
 
   let filteredCommands
@@ -277,6 +330,34 @@ function Timeline() {
           Actions
         </Tab>
       </TabsContainer>
+      {activeTab === "logs" && (
+        <LogFiltersContainer>
+          <CheckboxLabel>
+            <input
+              type="checkbox"
+              checked={logLevels.has("debug")}
+              onChange={() => toggleLogLevel("debug")}
+            />
+            Debug
+          </CheckboxLabel>
+          <CheckboxLabel>
+            <input
+              type="checkbox"
+              checked={logLevels.has("warn")}
+              onChange={() => toggleLogLevel("warn")}
+            />
+            Warn
+          </CheckboxLabel>
+          <CheckboxLabel>
+            <input
+              type="checkbox"
+              checked={logLevels.has("error")}
+              onChange={() => toggleLogLevel("error")}
+            />
+            Error
+          </CheckboxLabel>
+        </LogFiltersContainer>
+      )}
       <TimelineContainer>
         {filteredCommands.length === 0 ? (
           <EmptyState icon={MdReorder} title="No Activity">
