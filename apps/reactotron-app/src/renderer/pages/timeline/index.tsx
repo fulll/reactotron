@@ -109,8 +109,7 @@ const Tab = styled.button<{ $active: boolean }>`
   font-weight: ${(props) => (props.$active ? "600" : "500")};
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid
-    ${(props) => (props.$active ? props.theme.tag : props.theme.line)};
+  border: 1px solid ${(props) => (props.$active ? props.theme.tag : props.theme.line)};
 
   &:hover {
     background-color: ${(props) =>
@@ -148,19 +147,22 @@ function Timeline() {
 
   const [activeTab, setActiveTab] = useState<TabType>("all")
 
-  const filterByTab = useCallback((commands: any[]) => {
-    switch (activeTab) {
-      case "logs":
-        return commands.filter((cmd) => cmd.type === CommandType.Log)
-      case "network":
-        return commands.filter((cmd) => cmd.type === CommandType.ApiResponse)
-      case "actions":
-        return commands.filter((cmd) => cmd.type === CommandType.StateActionComplete)
-      case "all":
-      default:
-        return commands
-    }
-  }, [activeTab])
+  const filterByTab = useCallback(
+    (commands: any[]) => {
+      switch (activeTab) {
+        case "logs":
+          return commands.filter((cmd) => cmd.type === CommandType.Log)
+        case "network":
+          return commands.filter((cmd) => cmd.type === CommandType.ApiResponse)
+        case "actions":
+          return commands.filter((cmd) => cmd.type === CommandType.StateActionComplete)
+        case "all":
+        default:
+          return commands
+      }
+    },
+    [activeTab]
+  )
 
   let filteredCommands
   try {
