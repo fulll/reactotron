@@ -51,14 +51,16 @@ const ConnectionCard = styled.div`
   border-radius: 12px;
   background: ${(props) => props.theme.backgroundSubtleLight || props.theme.background};
   border: 1px solid ${(props) => props.theme.line};
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -71,7 +73,9 @@ const ConnectionCard = styled.div`
 
   &:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.2),
+      0 10px 10px -5px rgba(0, 0, 0, 0.1);
     border-color: ${(props) => props.theme.tag};
     animation: ${floatAnimation} 2s ease-in-out infinite;
 
@@ -149,7 +153,8 @@ const ScreenInfo = styled.div`
 
 function ConnectionCell({ connection }: { connection: Connection }) {
   const navigate = useNavigate()
-  
+  const { selectConnection } = useContext(StandaloneContext)
+
   const [ConnectionIcon, platformName, platformDetails, connectionName, screen] = useMemo(() => {
     return [
       getIcon(connection),
@@ -161,7 +166,8 @@ function ConnectionCell({ connection }: { connection: Connection }) {
   }, [connection])
 
   const handleClick = () => {
-    navigate(`/timeline/${connection.clientId}`)
+    selectConnection(connection.clientId)
+    navigate("/timeline")
   }
 
   return (
@@ -179,9 +185,7 @@ function ConnectionCell({ connection }: { connection: Connection }) {
             {platformName} {platformDetails}
           </InfoValue>
         </InfoRow>
-        {screen && (
-          <ScreenInfo>📱 {screen}</ScreenInfo>
-        )}
+        {screen && <ScreenInfo>📱 {screen}</ScreenInfo>}
       </CardBody>
     </ConnectionCard>
   )
