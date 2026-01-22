@@ -29,6 +29,7 @@ import {
 } from "react-icons/md"
 import { FaTimes } from "react-icons/fa"
 import styled from "styled-components"
+import { NetworkView } from "./NetworkView"
 
 const Container = styled.div`
   display: flex;
@@ -358,47 +359,51 @@ function Timeline() {
           </CheckboxLabel>
         </LogFiltersContainer>
       )}
-      <TimelineContainer>
-        {filteredCommands.length === 0 ? (
-          <EmptyState icon={MdReorder} title="No Activity">
-            <HelpMessage>
-              Once your app connects and starts sending events, they will appear here.
-            </HelpMessage>
-            <QuickStartButtonContainer onClick={openDocs}>
-              Check out the quick start guide here!
-            </QuickStartButtonContainer>
-            <Divider />
-            <RandomJoke />
-          </EmptyState>
-        ) : (
-          filteredCommands.map((command) => {
-            const CommandComponent = timelineCommandResolver(command.type)
+      {activeTab === "network" ? (
+        <NetworkView />
+      ) : (
+        <TimelineContainer>
+          {filteredCommands.length === 0 ? (
+            <EmptyState icon={MdReorder} title="No Activity">
+              <HelpMessage>
+                Once your app connects and starts sending events, they will appear here.
+              </HelpMessage>
+              <QuickStartButtonContainer onClick={openDocs}>
+                Check out the quick start guide here!
+              </QuickStartButtonContainer>
+              <Divider />
+              <RandomJoke />
+            </EmptyState>
+          ) : (
+            filteredCommands.map((command) => {
+              const CommandComponent = timelineCommandResolver(command.type)
 
-            if (CommandComponent) {
-              return (
-                <CommandComponent
-                  key={command.messageId}
-                  command={command}
-                  copyToClipboard={clipboard.writeText}
-                  readFile={(path) => {
-                    return new Promise((resolve, reject) => {
-                      fs.readFile(path, "utf-8", (err, data) => {
-                        if (err || !data) reject(new Error("Something failed"))
-                        else resolve(data)
+              if (CommandComponent) {
+                return (
+                  <CommandComponent
+                    key={command.messageId}
+                    command={command}
+                    copyToClipboard={clipboard.writeText}
+                    readFile={(path) => {
+                      return new Promise((resolve, reject) => {
+                        fs.readFile(path, "utf-8", (err, data) => {
+                          if (err || !data) reject(new Error("Something failed"))
+                          else resolve(data)
+                        })
                       })
-                    })
-                  }}
-                  sendCommand={sendCommand}
-                  dispatchAction={dispatchAction}
-                  openDispatchDialog={openDispatchModal}
-                />
-              )
-            }
+                    }}
+                    sendCommand={sendCommand}
+                    dispatchAction={dispatchAction}
+                    openDispatchDialog={openDispatchModal}
+                  />
+                )
+              }
 
-            return null
-          })
-        )}
-      </TimelineContainer>
+              return null
+            })
+          )}
+        </TimelineContainer>
+      )}
       <TimelineFilterModal
         isOpen={isFilterOpen}
         onClose={() => {

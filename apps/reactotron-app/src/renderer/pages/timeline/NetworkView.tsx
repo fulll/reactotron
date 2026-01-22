@@ -1,19 +1,61 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
 import styled from "styled-components"
-import Styles from "./network.styles"
-import { ContentView, ReactotronContext, Header, EmptyState } from "reactotron-core-ui"
+import { ContentView, ReactotronContext, EmptyState } from "reactotron-core-ui"
 import { MdNetworkCheck } from "react-icons/md"
-import { useDrawerResize } from "./useDrawerResize"
-import { NetworkRequestsList } from "./components/NetworkRequestsList"
-import { NetworkRequestHeader } from "./components/NetworkRequestHeader"
+import { useDrawerResize } from "../network/useDrawerResize"
+import { NetworkRequestsList } from "../network/components/NetworkRequestsList"
+import { NetworkRequestHeader } from "../network/components/NetworkRequestHeader"
 
-const {
-  Container,
-  ResizableSectionWrapper,
-  RequestResponseContainer,
-  RequestResponseContainerBody,
-  ResizeHandle,
-} = Styles
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`
+
+const ResizableSectionWrapper = styled.div`
+  display: grid;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+`
+
+const RequestResponseContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background-color: ${(props) => props.theme.background};
+`
+
+const RequestResponseContainerBody = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  background-color: ${(props) => props.theme.background};
+  display: flex;
+  flex-direction: column;
+`
+
+const ResizeHandle = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  cursor: col-resize;
+  z-index: 10;
+  background-color: transparent;
+
+  &:hover {
+    background-color: ${(props) => props.theme.tag};
+  }
+
+  &:active {
+    background-color: ${(props) => props.theme.tag};
+  }
+`
 
 const RawJsonToggleContainer = styled.div`
   display: flex;
@@ -80,7 +122,7 @@ const ContentWrapper = styled.div`
   padding: 20px;
 `
 
-export const Network = () => {
+export const NetworkView = () => {
   const hasUserResizedRef = useRef(false)
   const resizeTimeoutRef = useRef<NodeJS.Timeout>()
 
@@ -145,7 +187,6 @@ export const Network = () => {
   if (filteredCommands.length === 0) {
     return (
       <Container>
-        <Header title="Network" isDraggable />
         <EmptyState icon={MdNetworkCheck} title="No Network Activity">
           <p>Network requests will appear here once your app starts making API calls.</p>
         </EmptyState>
@@ -155,7 +196,6 @@ export const Network = () => {
 
   return (
     <Container>
-      <Header title="Network" isDraggable actions={[]} />
       <ResizableSectionWrapper
         ref={containerRef}
         style={{ gridTemplateColumns: `${leftPanelWidth}px 1fr` }}
