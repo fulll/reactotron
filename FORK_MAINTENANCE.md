@@ -161,9 +161,10 @@ xattr -cr apps/reactotron-app/dist/mac-arm64/Reactotron.app
 - [ ] Résoudre les conflits en privilégiant nos modifications sur les fichiers Timeline
 - [ ] Tester l'application en mode dev (`yarn workspace reactotron-app start`)
 - [ ] Vérifier les 3 fonctionnalités clés :
+  - [ ] Présence des onglet d'accès rapide dans la Timeline
+  - [ ] Onglet network avec toutes ces améliorations
   - [ ] Toggle Raw JSON dans Timeline > Network
   - [ ] Boutons Copy au survol des requêtes
-  - [ ] Absence du bouton Network dans la sidebar
 - [ ] Builder l'application (`BUILD_TARGET=macos yarn workspace reactotron-app build:release`)
 - [ ] Faire une Release => Distribuer les DMGs en fichiers joints
 
