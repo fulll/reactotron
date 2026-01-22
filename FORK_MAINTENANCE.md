@@ -12,7 +12,7 @@ Ce document décrit les modifications apportées au fork `fulll/reactotron` et l
 
 #### Affichage amélioré des requêtes réseau
 
-- **Fichier modifié** : [apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestsList.tsx](apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestsList.tsx)
+- **Fichier créé** : [apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestsList.tsx](apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestsList.tsx)
 - **Changement** : Le status code HTTP est affiché directement dans la liste avec un code couleur
   - **Vert** : 2xx (succès)
   - **Jaune** : 3xx (redirection)
@@ -22,13 +22,12 @@ Ce document décrit les modifications apportées au fork `fulll/reactotron` et l
 
 #### Affichage brut du JSON (Raw JSON Toggle)
 
-- **Fichier modifié** : [apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestHeader.tsx](apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestHeader.tsx)
+- **Fichier créé** : [apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestHeader.tsx](apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestHeader.tsx)
 - **Changement** : Ajout d'un toggle "Raw" dans l'onglet Response Body permettant d'afficher le JSON brut non formaté
 - **Raison** : Facilite le copier-coller du JSON complet sans traitement
 
 #### Boutons de copie rapide
 
-- **Fichier modifié** : [apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestsList.tsx](apps/reactotron-app/src/renderer/pages/network/components/NetworkRequestsList.tsx)
 - **Fichier créé** : [apps/reactotron-app/src/renderer/utils/api-helpers.ts](apps/reactotron-app/src/renderer/utils/api-helpers.ts)
 - **Changements** :
   - 3 boutons apparaissent au survol d'une requête :
